@@ -12,12 +12,17 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@langchain/core": "^1.2.3",
+    "@langchain/google-genai": "^2.2.0",
+    "@langchain/langgraph": "^1.4.8",
+    "@langchain/openai": "^1.5.5",
     "@prisma/client": "^6.2.1",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -32,6 +37,7 @@
     "typescript": "^7.0.2"
   },
   "prisma": {
+    "schema": "api/prisma/schema.prisma",
     "seed": "tsx prisma/seed.ts"
   }
 }
