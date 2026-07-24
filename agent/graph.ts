@@ -5,7 +5,7 @@ import { allTools } from "./tools"; // Всі твої тули вже мают�
 
 const model = new ChatGoogleGenerativeAI({ 
     model: "gemini-3.1-flash-lite", 
-    apiKey: "AQ.Ab8RN6IJWPwEBJcphtY6HEkMVbAkTVxRgRgQXxu1ah-eXfG_DA",
+    apiKey: process.env.GOOGLE_API_KEY,
 }).bindTools(allTools);
 
 // Вузол агента
