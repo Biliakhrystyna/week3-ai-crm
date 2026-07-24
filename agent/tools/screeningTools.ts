@@ -1,21 +1,21 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
-import { getAllScreenings, createScreening } from '../../api/services/screeningService';
+import { apiClient } from '../../api/client';
 
 // 1. Tool для отримання списку сеансів
 export const listScreeningsTool = tool(
     async () => {
         try {
-            const screenings = await getAllScreenings();
-            return JSON.stringify(screenings);
-        } catch (error) {
-            return "Не вдалося отримати розклад.";
+            const response = await apiClient.get('/screenings');
+            return JSON.stringify(response.data);
+        } catch (error:any) {
+            return `Не вдалося отримати розклад: ${error.response?.data?.error || error.message}`;;
         }
     },
     {
         name: "list_screenings",
         description: "Отримує поточний розклад усіх сеансів у кінотеатрі.",
-        schema: z.object({}), // Не потребує аргументів
+        schema: z.object({}), 
     }
 );
 
@@ -23,16 +23,12 @@ export const listScreeningsTool = tool(
 export const createScreeningTool = tool(
     async ({ startTime, price, movieId, hallId }) => {
         try {
-            // Викликаємо твій сервіс (перетворюємо дані, якщо треба)
-            const screening = await createScreening({ 
-                startTime, 
-                price, 
-                movieId, 
-                hallId 
+            const response = await apiClient.post('/screenings', { 
+                startTime, price, movieId, hallId 
             });
-            return JSON.stringify({ status: "success", screening });
+            return JSON.stringify({ status: "success", screening: response.data});
         } catch (error: any) {
-            return `Не вдалося створити сеанс: ${error.message}`;
+            return `Не вдалося створити сеанс: ${error.response?.data?.error || error.message}`;
         }
     },
     {
