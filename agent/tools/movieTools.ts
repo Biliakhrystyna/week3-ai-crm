@@ -1,15 +1,15 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
-import { getAllMovies, updateMovie, deleteMovie } from '../../api/services/movieService';
+import { apiClient } from '../../api/client';
 
 // 1. Tool для пошуку фільмів
 export const listMoviesTool = tool(
     async ({ title }) => {
         try {
-            const movies = await getAllMovies(title || "");
-            return JSON.stringify(movies);
-        } catch (error) {
-            return "Не вдалося отримати список фільмів.";
+            const response = await apiClient.get('/movies', { params: { title } });
+            return JSON.stringify(response.data);
+        } catch (error:any) {
+            return `Не вдалося отримати список фільмів: ${error.response?.data?.error || error.message}`;
         }
     },
     {
@@ -25,10 +25,10 @@ export const listMoviesTool = tool(
 export const updateMovieTool = tool(
     async ({ id, updateData }) => {
         try {
-            const movie = await updateMovie(id, updateData);
-            return JSON.stringify({ status: "success", movie });
-        } catch (error) {
-            return "Не вдалося оновити фільм.";
+           const response = await apiClient.put(`/movies/${id}`, updateData);
+            return JSON.stringify({ status: "success", movie: response.data });
+        } catch (error:any) {
+            return `Не вдалося оновити фільм: ${error.response?.data?.error || error.message}`;
         }
     },
     {
@@ -45,10 +45,10 @@ export const updateMovieTool = tool(
 export const deleteMovieTool = tool(
     async ({ id }) => {
         try {
-            await deleteMovie(id);
+            await apiClient.delete(`/movies/${id}`);
             return "Фільм успішно видалено.";
-        } catch (error) {
-            return "Помилка при видаленні фільму.";
+        } catch (error:any) {
+           return `Помилка при видаленні фільму: ${error.response?.data?.error || error.message}`;
         }
     },
     {

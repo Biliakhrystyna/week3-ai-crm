@@ -1,17 +1,16 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
-import { createHall } from '../../api/services/hallService';
-// Припустимо, що в тебе є цей метод у сервісі, або просто імпортуй його з prismaClient, якщо треба
-import { prisma } from '../../api/prismaClient'; 
+import { apiClient } from '../../api/client';
+
 
 // 1. Tool для створення зали
 export const createHallTool = tool(
     async ({ name, capacity }) => {
         try {
-            const hall = await createHall({ name, capacity });
-            return JSON.stringify({ status: "success", hall });
+           const response = await apiClient.post('/halls', { name, capacity });
+            return JSON.stringify({ status: "success", hall: response.data });
         } catch (error: any) {
-            return `Не вдалося створити залу: ${error.message}`;
+            return `Не вдалося створити залу: ${error.response?.data?.error || error.message}`;
         }
     },
     {
@@ -28,10 +27,10 @@ export const createHallTool = tool(
 export const listHallsTool = tool(
     async () => {
         try {
-            const halls = await prisma.hall.findMany();
-            return JSON.stringify(halls);
-        } catch (error) {
-            return "Не вдалося отримати список залів.";
+            const response = await apiClient.get('/halls');
+            return JSON.stringify(response.data);
+        } catch (error: any) {
+            return `Не вдалося отримати список залів: ${error.response?.data?.error || error.message}`;
         }
     },
     {
