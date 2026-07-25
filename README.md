@@ -77,5 +77,5 @@ GOOGLE_API_KEY="ваш_ключ"
 npm run dev
 5. Запуск 
 npx tsx fix-admin.ts
-npx tsx agent/run-capstone.ts "Покажи список фільмів"
+npx tsx agent/run-capstone.ts "Створи залу 'IMAX' на 250 місць."
 
